@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+/* DhanLens visual system: a research desk. Warm paper, navy ink, one highlighter. */
+:root {
+  --paper: #f3f0e7;
+  --surface: #fbfaf5;
+  --ink: #101c2e;
+  --muted: #55607a;
+  --rule: #d6d0c0;
+  --lime: #c9f03d; /* attention / selection only */
+  --teal: #0b6f67; /* verified data and links */
+  --amber: #a3500a; /* illustrative, simulated, hypothesis */
+  --focus: var(--ink);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-lime: var(--lime);
+  --color-teal: var(--teal);
+  --color-amber: var(--amber);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display-face);
+  --font-mono: var(--font-data);
+}
+
+body {
+  background-color: var(--paper);
+  /* Faint ledger grid. */
+  background-image:
+    linear-gradient(to right, rgb(16 28 46 / 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(16 28 46 / 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--ink);
+  font-family: var(--font-body), sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--ink);
+}
+
+/* Highlighter stroke behind a word or number. */
+.mark {
+  background: linear-gradient(transparent 12%, var(--lime) 12%, var(--lime) 88%, transparent 88%);
+  padding: 0 0.18em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Small uppercase data label. */
+.label {
+  font-family: var(--font-data), monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.rise {
+  animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+@keyframes pulse-soft {
+  50% {
+    opacity: 0.45;
+  }
+}
+.skeleton {
+  animation: pulse-soft 1.4s ease-in-out infinite;
+  background: var(--rule);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
