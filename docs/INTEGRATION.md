@@ -3,9 +3,11 @@
 DhanLens runs fully without credentials. This mode exists so a developer can view **their own** holdings
 through the same Impact Chain logic.
 
-> **Status: implemented and unit-tested against mocked HTTP responses. Not yet exercised against a live
-> Dhan account.** The fallback path (unreachable API → demo mode with a visible reason, no token in the
-> page) was verified in a running production build.
+> **Status: implemented, unit-tested against mocked HTTP responses, and run once (13 Oct 2026) against a
+> live Dhan account that has no holdings.** That confirmed authentication and the empty-account path only.
+> Mapping real holdings and reading last prices have not been exercised live. The fallback path
+> (unreachable API → demo mode with a visible reason, no token in the page) was verified in a running
+> production build.
 
 ## What it calls
 
@@ -57,8 +59,9 @@ Restart the server and open **Settings**. The mode badge reads `DHAN READ-ONLY` 
 
 - Which LTP segment to use when a holding reports `exchange: "ALL"` (the adapter uses `NSE_EQ` unless the
   holding is `BSE`). A miss degrades to cost basis rather than a wrong price.
-- The response for an account with no holdings (an empty array is handled; a dedicated error code would show `unavailable`).
-- The exact JSON shape of error bodies (`errorCode` is read if present; HTTP status is used otherwise).
+- The holdings payload for an account that does hold something, and the whole last-price request.
+- Error bodies beyond the one observed. An account with no holdings answers `HTTP 500` with
+  `{ errorType, errorCode: "DH-1111", errorMessage }`; the adapter reads that as an empty portfolio.
 
 ## Individual vs partner authentication
 

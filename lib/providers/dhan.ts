@@ -25,6 +25,7 @@ export class DhanError extends Error {
   constructor(
     readonly kind: DhanFailure,
     message: string,
+    readonly code = "",
   ) {
     super(message);
     this.name = "DhanError";
@@ -35,6 +36,8 @@ export class DhanError extends Error {
 const AUTH_CODES = new Set(["DH-901", "807", "808", "809", "810"]);
 const ENTITLEMENT_CODES = new Set(["DH-902", "806"]);
 const RATE_CODES = new Set(["DH-904", "805"]);
+// Observed on a live account: an account with no holdings answers HTTP 500 with this code, not an empty array.
+const NO_HOLDINGS_CODE = "DH-1111";
 
 const holdingSchema = z.object({
   exchange: z.string(),
@@ -48,8 +51,9 @@ const ltpSchema = z.object({
   data: z.record(z.string(), z.record(z.string(), z.object({ last_price: z.number().positive() }))),
 });
 
-function classify(status: number, body: unknown): DhanFailure {
-  const code = z.object({ errorCode: z.coerce.string() }).safeParse(body).data?.errorCode ?? "";
+const errorCodeOf = (body: unknown) => z.object({ errorCode: z.coerce.string() }).safeParse(body).data?.errorCode ?? "";
+
+function classify(status: number, code: string): DhanFailure {
   if (status === 401 || status === 403 || AUTH_CODES.has(code)) return "unauthenticated";
   if (ENTITLEMENT_CODES.has(code)) return "not_entitled";
   if (status === 429 || RATE_CODES.has(code)) return "rate_limited";
@@ -88,8 +92,10 @@ async function request(config: DhanConfig, path: string, body?: unknown): Promis
         if (json === undefined) throw new DhanError("invalid_response", MESSAGE.invalid_response);
         return json;
       }
-      failure = classify(response.status, json);
-      if (response.status < 500 || failure !== "unavailable") throw new DhanError(failure, MESSAGE[failure]);
+      const code = errorCodeOf(json);
+      failure = classify(response.status, code);
+      if (response.status < 500 || failure !== "unavailable" || code === NO_HOLDINGS_CODE)
+        throw new DhanError(failure, MESSAGE[failure], code);
     } catch (error) {
       if (error instanceof DhanError) throw error;
       failure = "unavailable"; // network error or timeout
@@ -106,7 +112,11 @@ export interface LivePortfolio {
 }
 
 export async function fetchDhanPortfolio(config: DhanConfig, now: string): Promise<LivePortfolio> {
-  const parsed = holdingsSchema.safeParse(await request(config, "/holdings"));
+  const raw = await request(config, "/holdings").catch((error: unknown) => {
+    if (error instanceof DhanError && error.code === NO_HOLDINGS_CODE) return [];
+    throw error;
+  });
+  const parsed = holdingsSchema.safeParse(raw);
   if (!parsed.success) throw new DhanError("invalid_response", MESSAGE.invalid_response);
   const holdings = parsed.data.filter((h) => h.totalQty > 0);
 

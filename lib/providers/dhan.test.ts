@@ -80,6 +80,13 @@ describe("fetchDhanPortfolio", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it("reads Dhan's 'no holdings' error as an empty account, without retrying", async () => {
+    const body = { errorType: "HOLDING_ERROR", errorCode: "DH-1111", errorMessage: "No holdings available" };
+    const { config, fetchMock } = setup({ "/holdings": [{ status: 500, body }] });
+    expect(await fetchDhanPortfolio(config, NOW)).toMatchObject({ positions: [], status: "live" });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it("reports an expired token without retrying or leaking it", async () => {
     const { config, fetchMock } = setup({ "/holdings": [{ status: 401, body: { errorCode: "DH-901", errorMessage: `bad ${TOKEN}` } }] });
     const error = await fetchDhanPortfolio(config, NOW).catch((e: unknown) => e);

@@ -73,7 +73,8 @@ cp .env.example .env.local   # then set DHAN_READ_ONLY_ENABLED=true, DHAN_CLIENT
 The token is used only on the server, for `GET /holdings` and `POST /marketfeed/ltp`. Never commit it and
 never give it a `NEXT_PUBLIC_` prefix. A personal access token (valid 24 hours) is for your own account
 only; a multi-user product needs Dhan's partner authentication. This adapter is unit-tested with mocked
-responses and **has not been run against a live account**. Details, limits and official links:
+responses and has been run against one live account **that has no holdings**; mapping real holdings and
+last prices is still unverified. Details, limits and official links:
 [docs/INTEGRATION.md](docs/INTEGRATION.md).
 
 ## Architecture at a glance

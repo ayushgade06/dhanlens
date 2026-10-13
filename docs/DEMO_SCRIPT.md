@@ -17,7 +17,7 @@ app before, run **Settings → Reset demo data** first.
 
 ## Questions to expect
 
-- **Is this live?** No. Demo fixtures. The Dhan adapter is unit-tested against mocked responses and has not been run against a live account.
+- **Is this live?** No. Demo fixtures. The Dhan adapter is unit-tested against mocked responses and has been run against one live account with no holdings; real holdings and last prices are unverified.
 - **Where do events come from?** Fixtures behind an `EventProvider` interface. No feed is integrated; licensing is an open requirement.
 - **Is the score a prediction?** No. Open "Why ranked here?" — it is a sum of five visible ranking inputs.
 - **Does Dhan already do this?** Unknown. This is a hypothesis to test, not a claim about anyone's product.
