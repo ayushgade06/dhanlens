@@ -48,8 +48,11 @@ Restart the server and open **Settings**. The mode badge reads `DHAN READ-ONLY` 
   `unauthenticated` and the app falls back to demo data, saying so.
 - **Rate limits.** The quote API allows 1 request/second. Reads are cached for 30 seconds; 4xx and rate-limit
   responses are never retried; network errors and 5xx are retried once after a short delay; requests time out after 8 seconds.
-- **Entitlement.** Last prices need a Data API subscription on your account. Without it the status is
-  `partial` and positions are valued at average cost. Validate your own plan and pricing with Dhan.
+- **Entitlement.** Last prices need a paid Data API subscription on your account. Without it the status is
+  `partial` and positions are valued at average cost. Observed on a free-plan account: the quote endpoint
+  answers `HTTP 401` with `{ "status": "failed", "data": { "806": "Data APIs not Subscribed" } }`, and the
+  historical endpoint answers `HTTP 401` with `errorCode: "DH-902"`. Both are read as "not subscribed", not
+  as a rejected token. Validate your own plan and pricing with Dhan.
 - **Sectors.** Dhan holdings carry no sector. A holding links to sector/macro events only if its trading
   symbol is in the curated demo taxonomy (`data/demo-instruments.ts`); others show "Sector not mapped".
 - **Events.** Dhan is not assumed to provide an event calendar. Events stay illustrative fixtures in every mode.

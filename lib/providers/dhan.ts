@@ -51,12 +51,18 @@ const ltpSchema = z.object({
   data: z.record(z.string(), z.record(z.string(), z.object({ last_price: z.number().positive() }))),
 });
 
-const errorCodeOf = (body: unknown) => z.object({ errorCode: z.coerce.string() }).safeParse(body).data?.errorCode ?? "";
+// Observed on a live account: trading endpoints answer { errorCode }, while the quote endpoint answers
+// { status: "failed", data: { "<code>": "<message>" } }.
+const errorCodeOf = (body: unknown) =>
+  z.object({ errorCode: z.coerce.string() }).safeParse(body).data?.errorCode ??
+  Object.keys(z.object({ data: z.record(z.string(), z.unknown()) }).safeParse(body).data?.data ?? {})[0] ??
+  "";
 
 function classify(status: number, code: string): DhanFailure {
-  if (status === 401 || status === 403 || AUTH_CODES.has(code)) return "unauthenticated";
+  // Codes first: a missing Data API subscription also arrives as HTTP 401, and is not a bad token.
   if (ENTITLEMENT_CODES.has(code)) return "not_entitled";
-  if (status === 429 || RATE_CODES.has(code)) return "rate_limited";
+  if (RATE_CODES.has(code) || status === 429) return "rate_limited";
+  if (AUTH_CODES.has(code) || status === 401 || status === 403) return "unauthenticated";
   return "unavailable";
 }
 

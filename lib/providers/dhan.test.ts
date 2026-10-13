@@ -61,7 +61,7 @@ describe("fetchDhanPortfolio", () => {
   });
 
   it("degrades to partial at cost basis when the Data API is not subscribed", async () => {
-    const { config } = setup({ "/holdings": [{ status: 200, body: HOLDINGS }], "/marketfeed/ltp": [{ status: 400, body: { errorCode: "806" } }] });
+    const { config } = setup({ "/holdings": [{ status: 200, body: HOLDINGS }], "/marketfeed/ltp": [{ status: 401, body: { data: { "806": "Data APIs not Subscribed" }, status: "failed" } }] });
     const live = await fetchDhanPortfolio(config, NOW);
     expect(live.status).toBe("partial");
     expect(live.positions.every((p) => p.lastPrice === undefined)).toBe(true);
