@@ -34,7 +34,7 @@ export function EventRow({ view, now, index = 0 }: { view: EventView; now: strin
     <Link
       href={`/events/${event.id}`}
       style={{ "--i": index } as React.CSSProperties}
-      className={`rise group grid gap-x-5 gap-y-2 border-b border-rule px-4 py-3.5 transition-colors hover:bg-lime/25 sm:grid-cols-[9.5rem_1fr_auto] ${
+      className={`rise group grid gap-x-5 gap-y-2 border-b border-rule px-4 py-3.5 transition-colors hover:bg-card sm:grid-cols-[9.5rem_1fr_auto] ${
         unlinked ? "opacity-70" : ""
       }`}
     >
@@ -43,7 +43,7 @@ export function EventRow({ view, now, index = 0 }: { view: EventView; now: strin
         <p className="label mt-1 text-muted">{formatRelativeDay(now, event.startsAt)}</p>
       </div>
       <div className="min-w-0">
-        <p className="flex items-start gap-1.5 text-[15px] font-medium leading-snug">
+        <p className="flex items-start gap-1.5 text-sm font-medium leading-snug">
           {event.title}
           <ArrowUpRight size={14} aria-hidden="true" className="mt-1 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
         </p>
@@ -70,7 +70,7 @@ export function WhyRanked({ score }: { score: RelevanceScore }) {
   if (score.factors.length === 0) return null;
   return (
     <details className="text-sm">
-      <summary className="label cursor-pointer text-muted hover:text-ink">Why ranked here?</summary>
+      <summary className="label cursor-pointer text-muted hover:text-fg">Why ranked here?</summary>
       <table className="mt-2 w-full max-w-md font-mono text-xs">
         <tbody>
           {score.factors.map((factor) => (

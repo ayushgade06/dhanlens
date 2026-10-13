@@ -60,7 +60,7 @@ export function EventDetail({ id }: { id: string }) {
           <LifecycleTag status={view.lifecycle} />
           {event.isIllustrative && <DemoTag>Illustrative scenario — not a real schedule</DemoTag>}
         </div>
-        <h1 className="mt-3 max-w-4xl font-display text-4xl leading-[1.05] sm:text-5xl">{event.title}</h1>
+        <h1 className="mt-3 max-w-4xl text-[28px] font-bold leading-tight">{event.title}</h1>
         <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
           <dl className="grid gap-x-8 gap-y-1 font-mono text-xs sm:grid-cols-2">
             <div className="flex gap-2">
@@ -73,7 +73,7 @@ export function EventDetail({ id }: { id: string }) {
               <dt className="text-muted">Source</dt>
               <dd>
                 {event.sourceUrl ? (
-                  <a href={event.sourceUrl} target="_blank" rel="noreferrer" className="text-teal underline">
+                  <a href={event.sourceUrl} target="_blank" rel="noreferrer" className="text-info underline">
                     {event.publisher}
                   </a>
                 ) : (
@@ -94,7 +94,7 @@ export function EventDetail({ id }: { id: string }) {
             <BandMark band={view.score.band} score={view.score.score} />
             {note ? (
               <>
-                <span className="label inline-flex items-center gap-1.5 text-teal">
+                <span className="label inline-flex items-center gap-1.5 text-info">
                   <BookmarkCheck size={14} aria-hidden="true" /> In your Event Ledger
                 </span>
                 <button type="button" onClick={() => ledger.remove(event.id)} className={buttonClass}>
@@ -133,7 +133,7 @@ export function EventDetail({ id }: { id: string }) {
                         <LinkTypeTag type={pl.linkType} />
                       </div>
                       {link && (
-                        <button type="button" onClick={() => select(channelNodeId(link.id))} className="mt-0.5 text-left text-muted hover:text-ink hover:underline">
+                        <button type="button" onClick={() => select(channelNodeId(link.id))} className="mt-0.5 text-left text-muted hover:text-fg hover:underline">
                           {link.rationale}
                         </button>
                       )}
@@ -153,7 +153,7 @@ export function EventDetail({ id }: { id: string }) {
               {event.actuals ? (
                 <>
                   {bullets(event.actuals.facts)}
-                  <p className="mt-2 font-mono text-[11px] text-muted">
+                  <p className="mt-2 font-mono text-xs text-muted">
                     {event.actuals.source.label} · {event.actuals.source.publisher} · {formatDateTime(event.actuals.source.publishedAt)}
                   </p>
                 </>

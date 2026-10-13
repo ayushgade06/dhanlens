@@ -62,7 +62,7 @@ export function LedgerNotes({ note, released }: { note: EventNote; released: boo
           )}
         </div>
         {released ? (
-          <p className="border-l-2 border-ink pl-3 text-sm italic">{note.preEventNote || "No note was written before the event."}</p>
+          <p className="border-l-2 border-muted pl-3 text-sm italic">{note.preEventNote || "No note was written before the event."}</p>
         ) : (
           <NoteDraft
             key={note.preEventNote}
@@ -72,17 +72,17 @@ export function LedgerNotes({ note, released }: { note: EventNote; released: boo
             onSave={(text) => ledger.setPreEventNote(note.eventId, text)}
           />
         )}
-        <p className="mt-1.5 font-mono text-[11px] text-muted">
+        <p className="mt-1.5 font-mono text-xs text-muted">
           Saved {formatDateTime(note.createdAt)} · last edited {formatDateTime(note.updatedAt)}
         </p>
         {note.noteHistory.length > 0 && (
           <details className="mt-1.5 text-sm">
-            <summary className="label cursor-pointer text-muted hover:text-ink">Earlier versions ({note.noteHistory.length})</summary>
+            <summary className="label cursor-pointer text-muted hover:text-fg">Earlier versions ({note.noteHistory.length})</summary>
             <ul className="mt-1.5 space-y-1.5">
               {note.noteHistory.map((h) => (
                 <li key={h.at} className="border-l border-rule pl-3 text-muted">
                   {h.note}
-                  <span className="block font-mono text-[11px]">replaced {formatDateTime(h.at)}</span>
+                  <span className="block font-mono text-xs">replaced {formatDateTime(h.at)}</span>
                 </li>
               ))}
             </ul>
@@ -100,7 +100,7 @@ export function LedgerNotes({ note, released }: { note: EventNote; released: boo
                 type="checkbox"
                 checked={item.done}
                 onChange={() => setItems(note.watchItems.map((w) => (w.id === item.id ? { ...w, done: !w.done } : w)))}
-                className="h-4 w-4 accent-[var(--ink)]"
+                className="h-4 w-4 accent-[var(--brand)]"
               />
               <label htmlFor={`watch-${item.id}`} className={`flex-1 text-sm ${item.done ? "text-muted line-through" : ""}`}>
                 {item.label}
@@ -109,7 +109,7 @@ export function LedgerNotes({ note, released }: { note: EventNote; released: boo
                 type="button"
                 aria-label={`Remove “${item.label}”`}
                 onClick={() => setItems(note.watchItems.filter((w) => w.id !== item.id))}
-                className="p-1 text-muted hover:text-ink"
+                className="p-1 text-muted hover:text-fg"
               >
                 <X size={14} aria-hidden="true" />
               </button>
@@ -165,7 +165,7 @@ export function Reflection({ note, canReview }: { note: EventNote; canReview: bo
           >
             {note.reviewedAt ? "Reopen review" : "Mark as reviewed"}
           </button>
-          {note.reviewedAt && <span className="font-mono text-[11px] text-muted">Reviewed {formatDateTime(note.reviewedAt)}</span>}
+          {note.reviewedAt && <span className="font-mono text-xs text-muted">Reviewed {formatDateTime(note.reviewedAt)}</span>}
         </div>
       )}
     </div>

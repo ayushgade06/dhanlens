@@ -75,12 +75,12 @@ export function SettingsView() {
         >
           <dl>
             <Row label="Current mode">
-              <Tag tone={live ? "teal" : "amber"}>{live ? "Dhan read-only" : "Demo data"}</Tag>
+              <Tag tone={live ? "info" : "warn"}>{live ? "Dhan read-only" : "Demo data"}</Tag>
             </Row>
             <Row label="Provider status">
               <span className="font-mono text-xs uppercase">{portfolio.status}</span>
               <span className="mt-0.5 block text-muted">{STATUS_COPY[portfolio.status]}</span>
-              {portfolio.message && <span className="mt-0.5 block text-amber">{portfolio.message}</span>}
+              {portfolio.message && <span className="mt-0.5 block text-warn">{portfolio.message}</span>}
             </Row>
             <Row label="Data as of">
               <span className="font-mono text-xs">{formatDateTime(portfolio.asOf)}</span>
@@ -120,7 +120,7 @@ export function SettingsView() {
               There is no in-app login. For local testing against <em>your own</em> account, set these server-side variables in{" "}
               <code className="font-mono text-xs">.env.local</code> and restart the server:
             </p>
-            <pre className="overflow-x-auto border border-rule bg-paper p-3 font-mono text-xs leading-relaxed">
+            <pre className="overflow-x-auto rounded-lg bg-canvas p-3 font-mono text-xs leading-relaxed">
               {"DHAN_READ_ONLY_ENABLED=true\nDHAN_CLIENT_ID=<your client id>\nDHAN_ACCESS_TOKEN=<24-hour access token>"}
             </pre>
             <ul className="list-disc space-y-1 pl-4 text-muted marker:text-muted">
@@ -131,7 +131,7 @@ export function SettingsView() {
             </ul>
             <p className="flex flex-wrap gap-x-4 gap-y-1">
               {SOURCES.map(([label, href]) => (
-                <a key={href} href={href} target="_blank" rel="noreferrer" className="text-teal underline underline-offset-2">
+                <a key={href} href={href} target="_blank" rel="noreferrer" className="text-info underline underline-offset-2">
                   {label}
                 </a>
               ))}
@@ -146,7 +146,7 @@ export function SettingsView() {
               note.
             </p>
             {confirming ? (
-              <div role="alertdialog" aria-label="Confirm reset" className="border border-ink bg-lime/30 p-3">
+              <div role="alertdialog" aria-label="Confirm reset" className="rounded-xl bg-warn/15 p-3">
                 <p className="font-medium">
                   {userNotes > 0
                     ? `This will permanently delete ${userNotes} ledger ${userNotes === 1 ? "entry" : "entries"} you created or edited.`

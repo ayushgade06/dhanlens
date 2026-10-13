@@ -105,7 +105,7 @@ export function EventRadar() {
       <form
         role="search"
         onSubmit={(e) => e.preventDefault()}
-        className="rise mb-5 grid gap-3 border border-rule bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4"
+        className="rise mb-5 grid gap-3 rounded-xl bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4"
       >
         <label className="block sm:col-span-2">
           <span className="label text-muted">Search events and issuers</span>
@@ -185,7 +185,7 @@ export function EventRadar() {
           results.map((v, i) => (
             <div key={v.event.id}>
               <EventRow view={v} now={now} index={i} />
-              <div className="border-b border-rule bg-paper/60 px-4 py-2 empty:hidden">
+              <div className="border-b border-rule bg-canvas/60 px-4 py-2 empty:hidden">
                 <WhyRanked score={v.score} />
               </div>
             </div>

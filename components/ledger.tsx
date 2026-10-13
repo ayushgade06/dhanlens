@@ -16,7 +16,7 @@ function Stage({ step, title, hint, children }: { step: number; title: string; h
   return (
     <section className="grid gap-x-6 gap-y-2 border-t border-rule py-5 first:border-t-0 md:grid-cols-[9rem_1fr]">
       <div>
-        <p className="font-display text-3xl leading-none text-muted">{step}</p>
+        <p className="text-xl font-semibold leading-none text-muted">{step}</p>
         <h3 className="label mt-1.5">{title}</h3>
         <p className="mt-1 text-xs text-muted">{hint}</p>
       </div>
@@ -36,16 +36,16 @@ function Entry({ view }: { view: EventView }) {
   );
 
   return (
-    <article className="rise border border-ink bg-surface">
-      <header className="border-b border-ink px-5 py-4">
+    <article className="rise overflow-hidden rounded-xl bg-surface">
+      <header className="border-b border-rule px-5 py-4">
         <div className="flex flex-wrap items-center gap-1.5">
           <LifecycleTag status={lifecycle} />
           {event.isIllustrative && <DemoTag>Illustrative scenario</DemoTag>}
         </div>
-        <h2 className="mt-2 font-display text-3xl leading-tight">{event.title}</h2>
+        <h2 className="mt-2 text-xl font-semibold leading-tight">{event.title}</h2>
         <p className="mt-1 font-mono text-xs text-muted">
           {formatDateTime(event.startsAt)} · {formatRelativeDay(snapshot.generatedAt, event.startsAt)} ·{" "}
-          <Link href={`/events/${event.id}`} className="text-teal underline underline-offset-2">
+          <Link href={`/events/${event.id}`} className="text-info underline underline-offset-2">
             Impact Chain and brief
           </Link>
         </p>
@@ -65,12 +65,12 @@ function Entry({ view }: { view: EventView }) {
                   <li key={fact}>{fact}</li>
                 ))}
               </ul>
-              <p className="mt-2 font-mono text-[11px] text-muted">
+              <p className="mt-2 font-mono text-xs text-muted">
                 {event.actuals.source.label} · {event.actuals.source.publisher} · published {formatDateTime(event.actuals.source.publishedAt)}
               </p>
             </>
           ) : (
-            <div className="border border-dashed border-rule p-4 text-sm">
+            <div className="rounded-xl border border-dashed border-rule p-4 text-sm">
               <p className="font-medium">Result unavailable.</p>
               <p className="mt-1 text-muted">No result was ingested from a verified source, so none is shown. Record what you saw in your own note below.</p>
             </div>
@@ -124,7 +124,7 @@ export function EventLedger() {
             type="button"
             aria-pressed={filter === s}
             onClick={() => setFilter(s)}
-            className={`label border px-2.5 py-1.5 ${filter === s ? "border-ink bg-ink text-paper" : "border-rule hover:border-ink"}`}
+            className={`label rounded-lg px-2.5 py-1.5 ${filter === s ? "bg-brand/15 text-brand" : "bg-card text-muted hover:text-fg"}`}
           >
             {s === "ALL" ? `All · ${entries.length}` : `${lifecycleLabel(s)} · ${count(s)}`}
           </button>
@@ -142,21 +142,21 @@ export function EventLedger() {
         <Empty title="Nothing in this state">No ledger entries are currently {filter === "ALL" ? "available" : lifecycleLabel(filter as LifecycleStatus).toLowerCase()}.</Empty>
       ) : (
         <div className="grid gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]">
-          <ul className="self-start border border-rule bg-surface">
+          <ul className="self-start overflow-hidden rounded-xl bg-surface">
             {shown.map((v) => (
               <li key={v.event.id} className="border-b border-rule last:border-b-0">
                 <button
                   type="button"
                   aria-current={selected.event.id === v.event.id}
                   onClick={() => setSelectedId(v.event.id)}
-                  className={`block w-full px-3.5 py-3 text-left transition-colors ${selected.event.id === v.event.id ? "bg-lime/50" : "hover:bg-lime/20"}`}
+                  className={`block w-full px-3.5 py-3 text-left transition-colors ${selected.event.id === v.event.id ? "bg-brand/15" : "hover:bg-card"}`}
                 >
                   <span className="flex flex-wrap items-center gap-1.5">
                     <LifecycleTag status={v.lifecycle} />
-                    {v.note ? <span className="label text-teal">Saved</span> : <span className="label text-muted">Not saved</span>}
+                    {v.note ? <span className="label text-info">Saved</span> : <span className="label text-muted">Not saved</span>}
                   </span>
                   <span className="mt-1.5 block text-sm font-medium leading-snug">{v.event.title}</span>
-                  <span className="mt-1 block font-mono text-[11px] text-muted">{formatRelativeDay(snapshot.generatedAt, v.event.startsAt)}</span>
+                  <span className="mt-1 block font-mono text-xs text-muted">{formatRelativeDay(snapshot.generatedAt, v.event.startsAt)}</span>
                 </button>
               </li>
             ))}

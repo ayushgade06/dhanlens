@@ -11,9 +11,9 @@ import { BandMark, DemoTag, Empty, LINK_META, LinkTypeTag, PageHeader, Panel, pr
 
 function Stat({ value, label, href }: { value: number; label: string; href: string }) {
   return (
-    <Link href={href} className="group border-l border-rule px-4 py-1 first:border-l-0 first:pl-0 hover:bg-lime/25">
-      <p className="font-display text-4xl leading-none">{value}</p>
-      <p className="label mt-1.5 text-muted group-hover:text-ink">{label}</p>
+    <Link href={href} className="group rounded-xl bg-surface px-4 py-3.5 transition-colors hover:bg-card">
+      <p className="text-[28px] font-bold leading-none">{value}</p>
+      <p className="label mt-1.5 text-muted group-hover:text-fg">{label}</p>
     </Link>
   );
 }
@@ -52,7 +52,7 @@ export function Overview() {
         {linked.length - direct.length} reach you only through a sector or a possible macro channel.
       </PageHeader>
 
-      <div className="rise mb-8 grid grid-cols-3 border-y border-rule py-4" style={{ "--i": 1 } as React.CSSProperties}>
+      <div className="rise mb-6 grid grid-cols-3 gap-3" style={{ "--i": 1 } as React.CSSProperties}>
         <Stat value={toHoldings.length} label="Upcoming, linked to holdings" href="/radar" />
         <Stat value={direct.length} label="Direct issuer events" href="/radar" />
         <Stat value={toReview.length} label="Observed, to review" href="/ledger" />
@@ -64,13 +64,13 @@ export function Overview() {
             <Panel
               title="Look at this first"
               aside={<BandMark band={top.score.band} score={top.score.score} />}
-              className="rise border-ink shadow-[6px_6px_0_var(--lime)]"
+              className="rise"
             >
               <div className="p-4">
                 <p className="font-mono text-xs text-muted">
                   {formatDateTime(top.event.startsAt)} · {formatRelativeDay(now, top.event.startsAt)}
                 </p>
-                <h3 className="mt-1.5 font-display text-3xl leading-tight">{top.event.title}</h3>
+                <h3 className="mt-1.5 text-xl font-semibold leading-tight">{top.event.title}</h3>
                 {top.event.isIllustrative && (
                   <div className="mt-2">
                     <DemoTag>Illustrative scenario</DemoTag>
@@ -95,7 +95,7 @@ export function Overview() {
                         </div>
                         {link && (
                           <p className="mt-1 text-sm text-muted">
-                            {link.rationale} <span className="text-ink">({targetLabel(link, instruments)})</span>
+                            {link.rationale} <span className="text-fg">({targetLabel(link, instruments)})</span>
                           </p>
                         )}
                       </li>
@@ -116,7 +116,7 @@ export function Overview() {
 
           <Panel
             title="Your portfolio"
-            aside={demo ? <DemoTag>Illustrative holdings</DemoTag> : <Tag tone="teal">Dhan read-only</Tag>}
+            aside={demo ? <DemoTag>Illustrative holdings</DemoTag> : <Tag tone="info">Dhan read-only</Tag>}
           >
             {snapshot.positions.length === 0 ? (
               <p className="p-4 text-sm text-muted">No holdings were returned.</p>
@@ -137,8 +137,8 @@ export function Overview() {
                     return (
                       <tr key={p.instrumentId} className="border-b border-rule last:border-b-0">
                         <td className="px-4 py-2">
-                          <span className="font-mono font-medium">{p.symbol}</span>
-                          <span className="ml-2 text-xs text-muted">{instrument?.sector ?? "Sector not mapped"}</span>
+                          <span className="block font-semibold">{p.symbol}</span>
+                          <span className="block text-xs text-muted">{instrument?.sector ?? "Sector not mapped"}</span>
                         </td>
                         <td className="px-2 py-2 text-right font-mono" title={basis === "COST" ? "Valued at average cost; no last price available" : "Quantity × last price"}>
                           {formatINRWhole(value)}

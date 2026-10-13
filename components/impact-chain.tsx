@@ -25,7 +25,7 @@ function NodeBody({ node, view }: { node: ChainNode; view: EventView }) {
       return (
         <>
           <span className="label opacity-70">Event</span>
-          <span className="line-clamp-2 text-[13px] font-medium leading-tight">{view.event.title.replace(/^Illustrative scenario: /, "")}</span>
+          <span className="line-clamp-2 text-sm font-medium leading-tight">{view.event.title.replace(/^Illustrative scenario: /, "")}</span>
         </>
       );
     case "channel":
@@ -34,14 +34,14 @@ function NodeBody({ node, view }: { node: ChainNode; view: EventView }) {
           <span className="label" style={{ color: LINK_STROKE[node.link.linkType] }}>
             {LINK_META[node.link.linkType].label} · {node.link.linkType === "MACRO" ? "hypothesis" : "evidence"}
           </span>
-          <span className="line-clamp-2 text-[13px] leading-tight">{node.link.channel}</span>
+          <span className="line-clamp-2 text-sm leading-tight">{node.link.channel}</span>
         </>
       );
     case "target":
       return (
         <>
           <span className="label text-muted">{node.isSector ? "Sector" : "Issuer"}</span>
-          <span className="line-clamp-2 text-[13px] font-medium leading-tight">{node.label}</span>
+          <span className="line-clamp-2 text-sm font-medium leading-tight">{node.label}</span>
         </>
       );
     case "row": {
@@ -49,10 +49,10 @@ function NodeBody({ node, view }: { node: ChainNode; view: EventView }) {
       return (
         <>
           <span className="flex items-center gap-1.5">
-            <span className="font-mono text-[13px] font-medium">{instruments.get(pl.instrumentId)?.symbol ?? pl.instrumentId}</span>
+            <span className="font-mono text-sm font-medium">{instruments.get(pl.instrumentId)?.symbol ?? pl.instrumentId}</span>
             <span className="label text-muted">{pl.relation === "HELD" ? "Held" : "Watchlist"}</span>
           </span>
-          <span className="font-mono text-[11px] text-muted">
+          <span className="font-mono text-xs text-muted">
             {pl.exposure
               ? `${formatINRWhole(pl.exposure.value)} · ${pl.exposure.kind === "MEASURED" ? "measured" : "indirect"}`
               : "No monetary exposure"}
@@ -66,18 +66,18 @@ function NodeBody({ node, view }: { node: ChainNode; view: EventView }) {
 }
 
 function nodeClass(node: ChainNode, selected: boolean, active: boolean) {
-  const base = "flex w-full flex-col justify-center gap-1 px-2.5 text-left transition-[opacity,background-color,box-shadow] duration-200";
+  const base = "flex w-full flex-col justify-center gap-1 rounded-lg px-2.5 text-left transition-[opacity,background-color] duration-200";
   const tone =
     node.kind === "event"
-      ? "border border-ink bg-ink text-paper"
+      ? "bg-fg text-canvas"
       : node.kind === "channel"
-        ? `border-2 bg-surface ${BORDER_STYLE[node.link.linkType]}`
+        ? `border-2 bg-card ${BORDER_STYLE[node.link.linkType]}`
         : node.kind === "row" && node.portfolioLink.relation === "WATCHLIST"
-          ? "border border-dashed border-ink bg-transparent"
+          ? "border border-dashed border-muted bg-transparent"
           : node.kind === "none"
             ? "border border-dashed border-rule"
-            : "border border-ink bg-surface";
-  const state = selected ? "!bg-lime !text-ink shadow-[3px_3px_0_var(--ink)]" : active ? "" : "opacity-30";
+            : "bg-card";
+  const state = selected ? "!border-brand !bg-brand !text-canvas [&_*]:!text-canvas" : active ? "" : "opacity-30";
   return `${base} ${tone} ${state}`;
 }
 
@@ -156,7 +156,7 @@ export function ImpactChain({ view, selectedId, onSelect }: ChainProps) {
         <LinkTypeTag type="SECTOR" long />
         <LinkTypeTag type="MACRO" long />
         <Tag title="Tracked, not owned">
-          <span className="inline-block h-2.5 w-2.5 border border-dashed border-ink" aria-hidden="true" /> Watchlist
+          <span className="inline-block h-2.5 w-2.5 rounded-sm border border-dashed border-muted" aria-hidden="true" /> Watchlist
         </Tag>
       </div>
 
@@ -261,19 +261,19 @@ function LinkFields({ link }: { link: EventLink }) {
           {link.evidence.map((e) => (
             <li key={e.id}>
               {e.url ? (
-                <a href={e.url} target="_blank" rel="noreferrer" className="text-teal underline underline-offset-2">
+                <a href={e.url} target="_blank" rel="noreferrer" className="text-info underline underline-offset-2">
                   {e.label}
                 </a>
               ) : (
                 e.label
               )}
-              <span className="block font-mono text-[11px] text-muted">
+              <span className="block font-mono text-xs text-muted">
                 {e.publisher} · {e.isPrimarySource ? "primary source" : "not a primary source"} · retrieved {formatDateTime(e.retrievedAt)}
                 {!e.url && " · no document link"}
               </span>
             </li>
           ))}
-          {link.evidence.length === 0 && <li className="text-amber">Source not verified.</li>}
+          {link.evidence.length === 0 && <li className="text-warn">Source not verified.</li>}
         </ul>
       </Field>
     </>
@@ -303,7 +303,7 @@ function ChainInspector({ view, node, onSelect }: { view: EventView; node: Chain
           {node.isSector
             ? "Sector taxonomy in instrument metadata. An instrument belongs here because its metadata says so."
             : "A verified issuer-to-instrument mapping by symbol."}
-          <span className="block font-mono text-[11px] text-muted">{snapshot.instruments[0]?.metadataSource}</span>
+          <span className="block font-mono text-xs text-muted">{snapshot.instruments[0]?.metadataSource}</span>
         </Field>
         <Field label="In your portfolio">
           {members.length === 0
@@ -347,7 +347,7 @@ function ChainInspector({ view, node, onSelect }: { view: EventView; node: Chain
                   ? "Measured: this is your position in the issuer the event is about."
                   : "Indirect: this is your position value. The link is sector-level or a hypothesis, so it is not a measured exposure to this event."}
               </span>
-              <span className="block font-mono text-[11px] text-muted">
+              <span className="block font-mono text-xs text-muted">
                 {position.quantity} shares × {formatINR(position.lastPrice ?? position.averagePrice)}{" "}
                 {pl.exposure.basis === "MARKET" ? "last price" : "average cost (no last price available)"} · avg cost {formatINR(position.averagePrice)}
               </span>
@@ -362,7 +362,7 @@ function ChainInspector({ view, node, onSelect }: { view: EventView; node: Chain
           ))}
         </Field>
         <Field label="Data">
-          <span className="font-mono text-[11px] text-muted">
+          <span className="font-mono text-xs text-muted">
             {position?.dataSource ?? "Watchlist"} · as of {formatDateTime(pl.asOf)}
           </span>{" "}
           {position?.isIllustrative && <DemoTag />}
@@ -371,7 +371,7 @@ function ChainInspector({ view, node, onSelect }: { view: EventView; node: Chain
           {others.length === 0
             ? "None reach this instrument."
             : others.map((v) => (
-                <Link key={v.event.id} href={`/events/${v.event.id}`} className="block text-teal underline underline-offset-2">
+                <Link key={v.event.id} href={`/events/${v.event.id}`} className="block text-info underline underline-offset-2">
                   {v.event.title}
                 </Link>
               ))}
@@ -393,7 +393,7 @@ function ChainInspector({ view, node, onSelect }: { view: EventView; node: Chain
         {view.rejected.length > 0 && (
           <Field label="Links not applied">
             {view.rejected.map((r) => (
-              <span key={r.link.id} className="block text-amber">
+              <span key={r.link.id} className="block text-warn">
                 {r.link.channel}: {r.reason}
               </span>
             ))}

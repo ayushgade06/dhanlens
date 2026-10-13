@@ -2,19 +2,19 @@ import type { ReactNode } from "react";
 import type { Confidence, LifecycleStatus, LinkType, Relation } from "@/lib/domain/types";
 import type { Band } from "@/lib/relevance/score";
 
-type Tone = "ink" | "teal" | "amber" | "muted" | "lime";
+type Tone = "fg" | "info" | "warn" | "muted" | "brand";
 
 const TONE: Record<Tone, string> = {
-  ink: "border-ink text-ink",
-  teal: "border-teal text-teal",
-  amber: "border-amber text-amber",
-  muted: "border-rule text-muted",
-  lime: "border-ink bg-lime text-ink",
+  fg: "bg-card text-fg",
+  info: "bg-info/15 text-info",
+  warn: "bg-warn/15 text-warn",
+  muted: "bg-card text-muted",
+  brand: "bg-brand/15 text-brand",
 };
 
 export function Tag({ tone = "muted", title, children }: { tone?: Tone; title?: string; children: ReactNode }) {
   return (
-    <span title={title} className={`label inline-flex items-center gap-1 whitespace-nowrap border px-1.5 py-0.5 ${TONE[tone]}`}>
+    <span title={title} className={`label inline-flex items-center gap-1 whitespace-nowrap rounded px-1.5 py-0.5 ${TONE[tone]}`}>
       {children}
     </span>
   );
@@ -23,7 +23,7 @@ export function Tag({ tone = "muted", title, children }: { tone?: Tone; title?: 
 /** Marks anything rendered from fixtures. Kept on every panel that shows demo numbers. */
 export function DemoTag({ children = "Illustrative" }: { children?: ReactNode }) {
   return (
-    <Tag tone="amber" title="Demo fixture — not live market data">
+    <Tag tone="warn" title="Demo fixture — not live market data">
       {children}
     </Tag>
   );
@@ -33,30 +33,30 @@ export const LINK_META: Record<LinkType, { label: string; long: string; tone: To
   DIRECT: {
     label: "Direct",
     long: "Direct issuer link",
-    tone: "ink",
+    tone: "fg",
     dash: "",
     help: "The event is specifically about this issuer.",
   },
   SECTOR: {
     label: "Sector",
     long: "Sector relationship",
-    tone: "teal",
+    tone: "info",
     dash: "7 5",
     help: "The event maps to a sector that contains this instrument, per instrument metadata.",
   },
   MACRO: {
     label: "Macro",
     long: "Possible macro transmission channel",
-    tone: "amber",
+    tone: "warn",
     dash: "1.5 5",
     help: "A curated hypothesis about how a macro event could reach a sector. Not a confirmed effect.",
   },
 };
 
 export const LINK_STROKE: Record<LinkType, string> = {
-  DIRECT: "var(--ink)",
-  SECTOR: "var(--teal)",
-  MACRO: "var(--amber)",
+  DIRECT: "var(--fg)",
+  SECTOR: "var(--info)",
+  MACRO: "var(--warn)",
 };
 
 /** Line sample + label, so link types differ by pattern as well as colour. */
@@ -74,7 +74,7 @@ export function LinkTypeTag({ type, long = false }: { type: LinkType; long?: boo
 
 export function RelationTag({ relation }: { relation: Relation }) {
   return relation === "HELD" ? (
-    <Tag tone="ink">Held</Tag>
+    <Tag tone="fg">Held</Tag>
   ) : (
     <Tag tone="muted" title="Tracked, not owned — no monetary exposure is shown">
       Watchlist
@@ -98,16 +98,16 @@ export function BandMark({ band, score }: { band: Band; score: number }) {
       title="Attention priority: a transparent ranking heuristic, not a probability or price prediction"
     >
       <span className={`label ${band === "HIGH" ? "mark" : band === "NOT_LINKED" ? "text-muted" : ""}`}>{BAND_LABEL[band]}</span>
-      {band !== "NOT_LINKED" && <span className="font-mono text-xs text-muted">{score}/100</span>}
+      {band !== "NOT_LINKED" && <span className="text-xs text-muted">{score}/100</span>}
     </span>
   );
 }
 
 const LIFECYCLE: Record<LifecycleStatus, { label: string; tone: Tone }> = {
   UPCOMING: { label: "Upcoming", tone: "muted" },
-  OBSERVED: { label: "Observed", tone: "teal" },
-  REVIEWED: { label: "Reviewed", tone: "lime" },
-  DATA_UNAVAILABLE: { label: "Data unavailable", tone: "amber" },
+  OBSERVED: { label: "Observed", tone: "info" },
+  REVIEWED: { label: "Reviewed", tone: "brand" },
+  DATA_UNAVAILABLE: { label: "Data unavailable", tone: "warn" },
 };
 
 export function LifecycleTag({ status }: { status: LifecycleStatus }) {
@@ -119,8 +119,8 @@ export function PageHeader({ eyebrow, title, children }: { eyebrow: string; titl
   return (
     <header className="rise mb-8 max-w-3xl">
       <p className="label text-muted">{eyebrow}</p>
-      <h1 className="mt-2 font-display text-4xl leading-[1.05] sm:text-5xl">{title}</h1>
-      {children && <div className="mt-3 text-[15px] leading-relaxed text-muted">{children}</div>}
+      <h1 className="mt-1.5 text-[28px] font-bold leading-tight">{title}</h1>
+      {children && <div className="mt-3 text-sm leading-relaxed text-muted">{children}</div>}
     </header>
   );
 }
@@ -137,10 +137,10 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section className={`border border-rule bg-surface ${className}`}>
+    <section className={`overflow-hidden rounded-xl bg-surface ${className}`}>
       {title && (
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rule px-4 py-2.5">
-          <h2 className="label text-ink">{title}</h2>
+          <h2 className="text-sm font-semibold text-fg">{title}</h2>
           {aside}
         </div>
       )}
@@ -151,15 +151,15 @@ export function Panel({
 
 export function Empty({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <div className="border border-dashed border-rule px-6 py-10 text-center">
-      <p className="font-display text-2xl">{title}</p>
+    <div className="rounded-xl border border-dashed border-rule px-6 py-10 text-center">
+      <p className="text-xl font-semibold">{title}</p>
       {children && <div className="mx-auto mt-2 max-w-md text-sm text-muted">{children}</div>}
     </div>
   );
 }
 
 export const buttonClass =
-  "inline-flex items-center justify-center gap-2 border border-ink px-3 py-2 text-sm font-medium transition-colors hover:bg-ink hover:text-paper disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-ink";
+  "inline-flex items-center justify-center gap-2 rounded-xl bg-card px-3.5 py-2 text-sm font-medium transition-colors hover:bg-rule disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-card";
 export const primaryButtonClass =
-  "inline-flex items-center justify-center gap-2 border border-ink bg-ink px-3 py-2 text-sm font-medium text-paper transition-colors hover:bg-lime hover:text-ink";
-export const fieldClass = "w-full border border-rule bg-surface px-3 py-2 text-sm placeholder:text-muted";
+  "inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-3.5 py-2 text-sm font-semibold text-canvas transition-colors hover:bg-brand/85";
+export const fieldClass = "w-full rounded-lg border border-rule bg-card px-3 py-2 text-sm placeholder:text-muted";

@@ -1,41 +1,43 @@
 @import "tailwindcss";
 
-/* DhanLens visual system: a research desk. Warm paper, navy ink, one highlighter. */
+/* DhanLens visual system: a dark terminal. Solid surfaces set the boundaries; green and red carry meaning. */
 :root {
-  --paper: #f3f0e7;
-  --surface: #fbfaf5;
-  --ink: #101c2e;
-  --muted: #55607a;
-  --rule: #d6d0c0;
-  --lime: #c9f03d; /* attention / selection only */
-  --teal: #0b6f67; /* verified data and links */
-  --amber: #a3500a; /* illustrative, simulated, hypothesis */
-  --focus: var(--ink);
+  color-scheme: dark;
+  --canvas: #000000; /* viewport */
+  --surface: #121212; /* panels, navigation */
+  --card: #1c1c1e; /* modules inside a panel, controls */
+  --rule: #2c2c2e; /* dividers between table rows */
+  --fg: #ffffff;
+  --muted: #8e8e93; /* labels, timestamps */
+  --brand: #00d09c; /* positive values, active controls, primary action */
+  --danger: #ff4d4d; /* negative values */
+  --info: #5aa9ff; /* sector links, verified data */
+  --warn: #f5a623; /* illustrative, simulated, hypothesis */
+  --focus: var(--brand);
 }
 
 @theme inline {
-  --color-paper: var(--paper);
+  --color-canvas: var(--canvas);
   --color-surface: var(--surface);
-  --color-ink: var(--ink);
-  --color-muted: var(--muted);
+  --color-card: var(--card);
   --color-rule: var(--rule);
-  --color-lime: var(--lime);
-  --color-teal: var(--teal);
-  --color-amber: var(--amber);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-warn: var(--warn);
   --font-sans: var(--font-body);
-  --font-display: var(--font-display-face);
-  --font-mono: var(--font-data);
+  /* Data is set in the same face with tabular figures, so columns of numbers line up. */
+  --font-mono: var(--font-body);
 }
 
 body {
-  background-color: var(--paper);
-  /* Faint ledger grid. */
-  background-image:
-    linear-gradient(to right, rgb(16 28 46 / 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(16 28 46 / 0.035) 1px, transparent 1px);
-  background-size: 32px 32px;
-  color: var(--ink);
-  font-family: var(--font-body), sans-serif;
+  background-color: var(--canvas);
+  color: var(--fg);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 :focus-visible {
@@ -44,24 +46,20 @@ body {
 }
 
 ::selection {
-  background: var(--lime);
-  color: var(--ink);
+  background: var(--brand);
+  color: var(--canvas);
 }
 
-/* Highlighter stroke behind a word or number. */
+/* Accent on a word or number. */
 .mark {
-  background: linear-gradient(transparent 12%, var(--lime) 12%, var(--lime) 88%, transparent 88%);
-  padding: 0 0.18em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+  color: var(--brand);
 }
 
-/* Small uppercase data label. */
+/* Caption: field labels, column heads, tags. */
 .label {
-  font-family: var(--font-data), monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 @keyframes rise {
@@ -82,7 +80,8 @@ body {
 }
 .skeleton {
   animation: pulse-soft 1.4s ease-in-out infinite;
-  background: var(--rule);
+  background: var(--card);
+  border-radius: 12px;
 }
 
 @media (prefers-reduced-motion: reduce) {

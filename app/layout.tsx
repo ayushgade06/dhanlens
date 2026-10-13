@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { Hanken_Grotesk, IBM_Plex_Mono, Instrument_Serif } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
 import { AppDataProvider } from "@/components/app-data";
 import { Shell, StatusStrip } from "@/components/shell";
 import { getSnapshot } from "@/lib/providers";
 import "./globals.css";
 
-const display = Instrument_Serif({ variable: "--font-display-face", subsets: ["latin"], weight: "400" });
-const body = Hanken_Grotesk({ variable: "--font-body", subsets: ["latin"] });
-const data = IBM_Plex_Mono({ variable: "--font-data", subsets: ["latin"], weight: ["400", "500"] });
+const body = Inter({ variable: "--font-body", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: { default: "DhanLens", template: "%s · DhanLens" },
@@ -27,7 +25,7 @@ async function LoadedApp({ children }: { children: ReactNode }) {
 
 function LoadingApp() {
   return (
-    <Shell status={<div className="border-b border-rule bg-surface px-8 py-2 text-xs text-muted">Loading data sources…</div>}>
+    <Shell status={<div className="bg-surface px-8 py-2 text-xs text-muted">Loading data sources…</div>}>
       <div role="status" aria-label="Loading" className="space-y-4">
         <div className="skeleton h-4 w-40" />
         <div className="skeleton h-12 w-2/3" />
@@ -39,7 +37,7 @@ function LoadingApp() {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en-IN" className={`${display.variable} ${body.variable} ${data.variable} antialiased`}>
+    <html lang="en-IN" className={`${body.variable} antialiased`}>
       <body>
         <Suspense fallback={<LoadingApp />}>
           <LoadedApp>{children}</LoadedApp>

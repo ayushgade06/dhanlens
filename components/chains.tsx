@@ -27,14 +27,14 @@ export function ImpactChains() {
         <Empty title="No chains to show">No event in the dataset has a curated link.</Empty>
       ) : (
         <div className="grid gap-6 xl:grid-cols-[20rem_minmax(0,1fr)]">
-          <ul className="rise self-start border border-rule bg-surface" aria-label="Events">
+          <ul className="rise self-start overflow-hidden rounded-xl bg-surface" aria-label="Events">
             {ranked.map((v) => (
               <li key={v.event.id} className="border-b border-rule last:border-b-0">
                 <button
                   type="button"
                   aria-current={v.event.id === view.event.id}
                   onClick={() => setSelection({ eventId: v.event.id, nodeId: EVENT_NODE })}
-                  className={`block w-full px-3.5 py-3 text-left transition-colors ${v.event.id === view.event.id ? "bg-lime/50" : "hover:bg-lime/20"}`}
+                  className={`block w-full px-3.5 py-3 text-left transition-colors ${v.event.id === view.event.id ? "bg-brand/15" : "hover:bg-card"}`}
                 >
                   <span className="block text-sm font-medium leading-snug">{v.event.title}</span>
                   <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -54,7 +54,7 @@ export function ImpactChains() {
             aside={
               <span className="flex flex-wrap items-center gap-2">
                 {view.event.isIllustrative && <DemoTag />}
-                <span className="font-mono text-[11px] text-muted">{formatDateTime(view.event.startsAt)}</span>
+                <span className="font-mono text-xs text-muted">{formatDateTime(view.event.startsAt)}</span>
               </span>
             }
             className="rise"

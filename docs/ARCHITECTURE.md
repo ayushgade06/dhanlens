@@ -81,11 +81,13 @@ upcoming and past events; exchange holidays are not modelled.
 
 ## Design system
 
-Warm paper canvas, navy ink, one lime highlighter for attention/selection, teal for verified/sector, amber
-for illustrative/simulated/hypothesis. Link types differ by line pattern (solid / dashed / dotted) as well as
-colour; watchlist rows are dashed outlines. Instrument Serif (display), Hanken Grotesk (text), IBM Plex Mono
-(data). Motion is limited to a load-in rise and path highlighting, and is disabled under
-`prefers-reduced-motion`.
+A dark terminal palette in the style of Dhan's own apps (an independent look-alike, not Dhan's assets):
+black viewport, `#121212` panels, `#1C1C1E` cards, and solid surfaces instead of outlines. Green (`#00D09C`)
+marks positive returns, active controls and the primary action; red (`#FF4D4D`) marks negative returns; blue
+marks sector links and verified data; amber marks illustrative, simulated and hypothesis. Link types differ by
+line pattern (solid / dashed / dotted) as well as colour; watchlist rows are dashed outlines. One typeface,
+Inter, with tabular figures. Radii are 4px for tags and 12px for panels and buttons. Motion is limited to a
+load-in rise and path highlighting, and is disabled under `prefers-reduced-motion`.
 
 ## Deliberate simplifications
 
