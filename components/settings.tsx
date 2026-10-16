@@ -94,24 +94,26 @@ export function SettingsView() {
         </Panel>
 
         <Panel title="Data categories" className="rise">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="label border-b border-rule text-left text-muted">
-                <th scope="col" className="px-4 py-2 font-normal">Category</th>
-                <th scope="col" className="px-2 py-2 font-normal">Source</th>
-                <th scope="col" className="px-4 py-2 font-normal">State</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map(([name, source, state]) => (
-                <tr key={name} className="border-b border-rule last:border-b-0">
-                  <th scope="row" className="px-4 py-2 text-left font-medium">{name}</th>
-                  <td className="px-2 py-2 text-muted">{source}</td>
-                  <td className="px-4 py-2 font-mono text-xs uppercase">{state}</td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="label border-b border-rule text-left text-muted">
+                  <th scope="col" className="px-4 py-2 font-normal">Category</th>
+                  <th scope="col" className="px-2 py-2 font-normal">Source</th>
+                  <th scope="col" className="px-4 py-2 font-normal">State</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {categories.map(([name, source, state]) => (
+                  <tr key={name} className="border-b border-rule last:border-b-0">
+                    <th scope="row" className="px-4 py-2 text-left font-medium">{name}</th>
+                    <td className="px-2 py-2 text-muted">{source}</td>
+                    <td className="px-4 py-2 font-mono text-xs uppercase">{state}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Panel>
 
         <Panel title="Developer setup: read-only DhanHQ (optional)" className="rise">

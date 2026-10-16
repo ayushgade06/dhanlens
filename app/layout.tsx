@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
 import { AppDataProvider } from "@/components/app-data";
@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   description:
     "Portfolio-aware market event intelligence. An independent prototype; not affiliated with or endorsed by Dhan.",
 };
+
+// cover lets the bottom tab bar pad itself past the phone's home indicator.
+export const viewport: Viewport = { viewportFit: "cover", themeColor: "#121212" };
 
 async function LoadedApp({ children }: { children: ReactNode }) {
   const snapshot = await getSnapshot();

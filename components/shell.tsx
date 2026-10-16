@@ -8,11 +8,11 @@ import type { PortfolioState } from "@/lib/domain/types";
 import { formatDateTime } from "@/lib/format";
 
 const NAV = [
-  { href: "/", label: "Overview", icon: LayoutDashboard },
-  { href: "/radar", label: "Event Radar", icon: Radar },
-  { href: "/chains", label: "Impact Chains", icon: Waypoints },
-  { href: "/ledger", label: "Event Ledger", icon: BookOpenCheck },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/", label: "Overview", short: "Overview", icon: LayoutDashboard },
+  { href: "/radar", label: "Event Radar", short: "Radar", icon: Radar },
+  { href: "/chains", label: "Impact Chains", short: "Chains", icon: Waypoints },
+  { href: "/ledger", label: "Event Ledger", short: "Ledger", icon: BookOpenCheck },
+  { href: "/settings", label: "Settings", short: "Settings", icon: Settings },
 ];
 
 function Lockup() {
@@ -31,18 +31,23 @@ function Nav() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href) || (href === "/radar" && pathname.startsWith("/events"));
   return (
-    <nav aria-label="Main" className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
-      {NAV.map(({ href, label, icon: Icon }) => (
+    // Below lg: a fixed bottom tab bar, as in a mobile app. From lg: the sidebar list.
+    <nav
+      aria-label="Main"
+      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-rule bg-surface pb-[env(safe-area-inset-bottom)] lg:static lg:flex lg:flex-col lg:gap-1 lg:border-0 lg:bg-transparent lg:pb-0"
+    >
+      {NAV.map(({ href, label, short, icon: Icon }) => (
         <Link
           key={href}
           href={href}
           aria-current={isActive(href) ? "page" : undefined}
-          className={`flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
-            isActive(href) ? "bg-brand/15 font-medium text-brand" : "text-muted hover:bg-card hover:text-fg"
+          className={`flex flex-col items-center gap-1 py-2 text-[0.6875rem] transition-colors lg:flex-row lg:gap-2.5 lg:rounded-lg lg:px-3 lg:text-sm ${
+            isActive(href) ? "font-medium text-brand lg:bg-brand/15" : "text-muted hover:text-fg lg:hover:bg-card"
           }`}
         >
-          <Icon size={16} aria-hidden="true" />
-          {label}
+          <Icon size={18} aria-hidden="true" className="lg:size-4" />
+          <span className="lg:hidden">{short}</span>
+          <span className="hidden lg:inline">{label}</span>
         </Link>
       ))}
     </nav>
@@ -84,7 +89,7 @@ export function Shell({ status, children }: { status: ReactNode; children: React
       </aside>
       <div className="min-w-0">
         {status}
-        <main id="main" className="mx-auto max-w-[78rem] px-4 py-8 sm:px-8 sm:py-10">
+        <main id="main" className="mx-auto max-w-[78rem] px-4 pb-24 pt-6 sm:px-8 sm:pt-10 lg:pb-10">
           {children}
         </main>
       </div>

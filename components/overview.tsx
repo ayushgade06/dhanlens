@@ -58,7 +58,7 @@ export function Overview() {
         <Stat value={toReview.length} label="Observed, to review" href="/ledger" />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
         <div className="space-y-6">
           {top ? (
             <Panel
@@ -121,36 +121,41 @@ export function Overview() {
             {snapshot.positions.length === 0 ? (
               <p className="p-4 text-sm text-muted">No holdings were returned.</p>
             ) : (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="label border-b border-rule text-left text-muted">
-                    <th scope="col" className="px-4 py-2 font-normal">Instrument</th>
-                    <th scope="col" className="px-2 py-2 text-right font-normal">Value (₹)</th>
-                    <th scope="col" className="px-2 py-2 text-right font-normal">Weight</th>
-                    <th scope="col" className="px-4 py-2 text-right font-normal">Upcoming events</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {snapshot.positions.map((p) => {
-                    const { value, basis } = positionValue(p);
-                    const instrument = instruments.get(p.instrumentId);
-                    return (
-                      <tr key={p.instrumentId} className="border-b border-rule last:border-b-0">
-                        <td className="px-4 py-2">
-                          <span className="block font-semibold">{p.symbol}</span>
-                          <span className="block text-xs text-muted">{instrument?.sector ?? "Sector not mapped"}</span>
-                        </td>
-                        <td className="px-2 py-2 text-right font-mono" title={basis === "COST" ? "Valued at average cost; no last price available" : "Quantity × last price"}>
-                          {formatINRWhole(value)}
-                          {basis === "COST" && <span className="text-muted"> *</span>}
-                        </td>
-                        <td className="px-2 py-2 text-right font-mono">{formatWeight(total > 0 ? value / total : 0)}</td>
-                        <td className="px-4 py-2 text-right font-mono">{upcomingByInstrument(p.instrumentId)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="label border-b border-rule text-left text-muted">
+                      <th scope="col" className="px-3 py-2 sm:px-4 font-normal">Instrument</th>
+                      <th scope="col" className="px-1.5 py-2 sm:px-2 text-right font-normal">Value (₹)</th>
+                      <th scope="col" className="px-1.5 py-2 sm:px-2 text-right font-normal">Weight</th>
+                      <th scope="col" className="px-3 py-2 sm:px-4 text-right font-normal">
+                        <span className="sm:hidden">Events</span>
+                        <span className="hidden sm:inline">Upcoming events</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {snapshot.positions.map((p) => {
+                      const { value, basis } = positionValue(p);
+                      const instrument = instruments.get(p.instrumentId);
+                      return (
+                        <tr key={p.instrumentId} className="border-b border-rule last:border-b-0">
+                          <td className="px-3 py-2 sm:px-4">
+                            <span className="block font-semibold">{p.symbol}</span>
+                            <span className="block text-xs text-muted">{instrument?.sector ?? "Sector not mapped"}</span>
+                          </td>
+                          <td className="px-1.5 py-2 sm:px-2 text-right font-mono" title={basis === "COST" ? "Valued at average cost; no last price available" : "Quantity × last price"}>
+                            {formatINRWhole(value)}
+                            {basis === "COST" && <span className="text-muted"> *</span>}
+                          </td>
+                          <td className="px-1.5 py-2 sm:px-2 text-right font-mono">{formatWeight(total > 0 ? value / total : 0)}</td>
+                          <td className="px-3 py-2 sm:px-4 text-right font-mono">{upcomingByInstrument(p.instrumentId)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             )}
             <p className="border-t border-rule px-4 py-2 text-xs text-muted">
               {snapshot.watchlist.length} watchlist instruments tracked without monetary exposure.

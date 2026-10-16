@@ -68,17 +68,17 @@ export function ObservationPanel({ event, outcome }: { event: MarketEvent; outco
       ) : (
         <>
           <div className="mt-3 overflow-x-auto">
-            <table className="w-full min-w-[34rem] text-sm">
+            <table className="w-full text-sm sm:min-w-[34rem]">
               <caption className="sr-only">
                 Close-to-close price returns around the event. {CAUSATION_NOTE}
               </caption>
               <thead>
                 <tr className="label border-b border-rule text-left text-muted">
                   <th scope="col" className="py-2 pr-3 font-normal">Instrument</th>
-                  <th scope="col" className="px-3 py-2 font-normal">Start close</th>
-                  <th scope="col" className="px-3 py-2 font-normal">End close</th>
+                  <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Start close</th>
+                  <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">End close</th>
                   <th scope="col" className="px-3 py-2 text-right font-normal">Return (%)</th>
-                  <th scope="col" className="px-3 py-2 text-right font-normal">Benchmark (%)</th>
+                  <th scope="col" className="hidden px-3 py-2 text-right font-normal sm:table-cell">Benchmark (%)</th>
                   <th scope="col" className="py-2 pl-3 text-right font-normal">
                     <abbr title="Instrument return minus benchmark return, in percentage points">Relative (pp)</abbr>
                   </th>
@@ -91,29 +91,30 @@ export function ObservationPanel({ event, outcome }: { event: MarketEvent; outco
                       {o.label}
                       {o.limitation && <span className="block max-w-56 font-sans text-xs font-normal text-warn">{o.limitation}</span>}
                     </th>
-                    <td className="px-3 py-2">
+                    <td className="hidden px-3 py-2 sm:table-cell">
                       {formatINR(o.startPrice)}
                       <span className="block text-xs text-muted">{formatDate(o.startDate)}</span>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="hidden px-3 py-2 sm:table-cell">
                       {formatINR(o.endPrice)}
                       <span className="block text-xs text-muted">{formatDate(o.endDate)}</span>
                     </td>
                     <td className={`px-3 py-2 text-right ${signText(o.absoluteReturn)}`}>{formatPercent(o.absoluteReturn)}</td>
-                    <td className={`px-3 py-2 text-right ${signText(o.benchmarkReturn ?? 0)}`}>{o.benchmarkReturn === null ? "—" : formatPercent(o.benchmarkReturn)}</td>
-                    <td className={`py-2 pl-3 text-right font-medium ${signText(o.relativeReturn ?? 0)}`}>{o.relativeReturn === null ? "Not computed" : formatPoints(o.relativeReturn)}</td>
+                    <td className={`hidden px-3 py-2 text-right sm:table-cell ${signText(o.benchmarkReturn ?? 0)}`}>{o.benchmarkReturn === null ? "—" : formatPercent(o.benchmarkReturn)}</td>
+                    <td className={`whitespace-nowrap py-2 pl-3 text-right font-medium ${signText(o.relativeReturn ?? 0)}`}>{o.relativeReturn === null ? "Not computed" : formatPoints(o.relativeReturn)}</td>
                   </tr>
                 ))}
               </tbody>
               {summary && observations.length > 1 && (
                 <tfoot className="font-mono text-sm">
                   <tr>
-                    <th scope="row" colSpan={3} className="py-2 pr-3 text-left font-sans text-xs font-normal text-muted">
+                    <th scope="row" className="py-2 pr-3 text-left font-sans text-xs font-normal text-muted">
                       {AGGREGATION_METHOD}
                     </th>
+                    <td colSpan={2} className="hidden sm:table-cell" />
                     <td className={`px-3 py-2 text-right ${signText(summary.absolute)}`}>{formatPercent(summary.absolute)}</td>
-                    <td />
-                    <td className={`py-2 pl-3 text-right font-medium ${signText(summary.relative ?? 0)}`}>{summary.relative === null ? "Not computed" : formatPoints(summary.relative)}</td>
+                    <td className="hidden sm:table-cell" />
+                    <td className={`whitespace-nowrap py-2 pl-3 text-right font-medium ${signText(summary.relative ?? 0)}`}>{summary.relative === null ? "Not computed" : formatPoints(summary.relative)}</td>
                   </tr>
                 </tfoot>
               )}

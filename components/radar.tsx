@@ -105,9 +105,9 @@ export function EventRadar() {
       <form
         role="search"
         onSubmit={(e) => e.preventDefault()}
-        className="rise mb-5 grid gap-3 rounded-xl bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4"
+        className="rise mb-5 grid grid-cols-2 gap-3 rounded-xl bg-surface p-4 lg:grid-cols-4"
       >
-        <label className="block sm:col-span-2">
+        <label className="col-span-2 block">
           <span className="label text-muted">Search events and issuers</span>
           <span className="relative mt-1 block">
             <Search size={15} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
