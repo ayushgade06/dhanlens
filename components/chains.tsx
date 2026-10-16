@@ -27,14 +27,18 @@ export function ImpactChains() {
         <Empty title="No chains to show">No event in the dataset has a curated link.</Empty>
       ) : (
         <div className="grid gap-6 xl:grid-cols-[20rem_minmax(0,1fr)]">
-          <ul className="rise self-start overflow-hidden rounded-xl bg-surface" aria-label="Events">
+          {/* Below xl: a swipeable strip, so the chain itself is on the first screen. From xl: a sidebar list. */}
+          <ul
+            className="rise -mx-4 flex snap-x scroll-px-4 gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0 xl:block xl:self-start xl:overflow-hidden xl:rounded-xl xl:bg-surface xl:p-0"
+            aria-label="Events"
+          >
             {ranked.map((v) => (
-              <li key={v.event.id} className="border-b border-rule last:border-b-0">
+              <li key={v.event.id} className="w-64 shrink-0 snap-start overflow-hidden rounded-xl bg-surface xl:w-auto xl:rounded-none xl:border-b xl:border-rule xl:last:border-b-0">
                 <button
                   type="button"
                   aria-current={v.event.id === view.event.id}
                   onClick={() => setSelection({ eventId: v.event.id, nodeId: EVENT_NODE })}
-                  className={`block w-full px-3.5 py-3 text-left transition-colors ${v.event.id === view.event.id ? "bg-brand/15" : "hover:bg-card"}`}
+                  className={`block h-full w-full px-3.5 py-3 text-left transition-colors ${v.event.id === view.event.id ? "bg-brand/15" : "hover:bg-card"}`}
                 >
                   <span className="block text-sm font-medium leading-snug">{v.event.title}</span>
                   <span className="mt-1.5 flex flex-wrap items-center gap-1.5">

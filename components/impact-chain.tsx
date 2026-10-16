@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowDown, CornerUpLeft } from "lucide-react";
-import type { EventLink } from "@/lib/domain/types";
+import { CornerUpLeft } from "lucide-react";
+import type { EventLink, LinkType } from "@/lib/domain/types";
 import { formatDateTime, formatINR, formatINRWhole, formatWeight } from "@/lib/format";
 import { buildChain, EVENT_NODE, isNodeActive, linksThrough, type Chain, type ChainNode } from "@/lib/relevance/chain";
 import { isUpcoming, type EventView } from "@/lib/view-model";
@@ -11,6 +11,8 @@ import { useAppData } from "./app-data";
 import { buttonClass, CONFIDENCE_LABEL, DemoTag, LINK_META, LINK_STROKE, LinkTypeTag, Panel, RelationTag, Tag } from "./ui";
 
 const NODE_H = 76;
+const MOBILE_NODE_H = 60;
+const MOBILE_GAP = 10; // px above each branch
 const GAP = 14;
 const COL_W = 21; // percent
 const COL_GAP = (100 - COL_W * 4) / 3;
@@ -81,6 +83,35 @@ function nodeClass(node: ChainNode, selected: boolean, active: boolean) {
   return `${base} ${tone} ${state}`;
 }
 
+/**
+ * One child in the narrow tree: an elbow from the parent's spine into this node, styled like the link it follows.
+ * The spine continues past non-last children so siblings stay joined. Children render after the node.
+ */
+function Branch({
+  type,
+  on,
+  next,
+  children,
+}: {
+  type: LinkType;
+  on: boolean;
+  /** The spine down to later siblings; styled like the next one, lit if any later one is. */
+  next?: { type: LinkType; on: boolean };
+  children: React.ReactNode;
+}) {
+  const line = (t: LinkType, lit: boolean) => ({ borderColor: LINK_STROKE[t], opacity: lit ? 1 : 0.2, transition: "opacity 200ms" });
+  const elbow = MOBILE_GAP + MOBILE_NODE_H / 2;
+  return (
+    <div className="relative pl-5" style={{ paddingTop: MOBILE_GAP }}>
+      <span aria-hidden="true" className={`absolute left-0 top-0 w-5 rounded-bl-xl border-b-2 border-l-2 ${BORDER_STYLE[type]}`} style={{ ...line(type, on), height: elbow }} />
+      {next && (
+        <span aria-hidden="true" className={`absolute bottom-0 left-0 border-l-2 ${BORDER_STYLE[next.type]}`} style={{ ...line(next.type, next.on), top: elbow }} />
+      )}
+      {children}
+    </div>
+  );
+}
+
 interface ChainProps {
   view: EventView;
   selectedId: string;
@@ -134,7 +165,7 @@ export function ImpactChain({ view, selectedId, onSelect }: ChainProps) {
         key={node.id}
         type="button"
         aria-pressed={selectedId === node.id}
-        onClick={() => onSelect(node.id)}
+        onClick={() => select(node.id)}
         onMouseEnter={() => setHoveredId(node.id)}
         onMouseLeave={() => setHoveredId(null)}
         onFocus={() => setHoveredId(node.id)}
@@ -147,6 +178,16 @@ export function ImpactChain({ view, selectedId, onSelect }: ChainProps) {
     );
 
   const nodeById = new Map(chain.nodes.map((n) => [n.id, n]));
+  const channels = chain.nodes.filter((n): n is Extract<ChainNode, { kind: "channel" }> => n.kind === "channel");
+
+  // On narrow screens the inspector sits below the whole tree, so bring it into view after a tap.
+  const inspectorRef = useRef<HTMLDivElement>(null);
+  const select = (id: string) => {
+    onSelect(id);
+    // A short pause lets the highlighted path register before the page moves.
+    if (window.matchMedia("(max-width: 767px)").matches)
+      setTimeout(() => inspectorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 450);
+  };
 
   return (
     <div>
@@ -203,24 +244,43 @@ export function ImpactChain({ view, selectedId, onSelect }: ChainProps) {
         </div>
       </div>
 
-      {/* Narrow: one vertical path per link */}
-      <div className="space-y-5 md:hidden">
-        {button(nodeById.get(EVENT_NODE)!)}
-        {chain.nodes.flatMap((channel) => {
-          if (channel.kind !== "channel") return [];
-          const target = chain.nodes.find((n) => n.kind === "target" && n.linkIds.includes(channel.link.id));
-          const ends = chain.nodes.filter((n) => n.col === 3 && n.linkIds.includes(channel.link.id));
-          return (
-            <div key={channel.id} className="space-y-1.5 border-l-2 pl-3" style={{ borderColor: LINK_STROKE[channel.link.linkType] }}>
-              <p className="label text-muted">Path · {LINK_META[channel.link.linkType].long}</p>
-              {button(channel)}
-              <ArrowDown size={14} aria-hidden="true" className="mx-auto text-muted" />
-              {target && button(target)}
-              <ArrowDown size={14} aria-hidden="true" className="mx-auto text-muted" />
-              <div className="space-y-1.5">{ends.map((n) => button(n))}</div>
-            </div>
-          );
-        })}
+      {/* Narrow: the same graph as a top-down tree, joined by link-styled connectors */}
+      <div className="md:hidden" role="group" aria-label={`Impact chain for ${view.event.title}`}>
+        {button(nodeById.get(EVENT_NODE)!, { height: MOBILE_NODE_H })}
+        <div className="ml-4">
+          {channels.map((channel, i) => {
+            const link = channel.link;
+            const target = chain.nodes.find((n) => n.kind === "target" && n.linkIds.includes(link.id));
+            const ends = chain.nodes.filter((n) => n.col === 3 && n.linkIds.includes(link.id));
+            const on = (n: ChainNode) => through.has(link.id) && activeIds.has(n.id);
+            const later = channels.slice(i + 1);
+            const next = later.length > 0 ? { type: later[0].link.linkType, on: later.some((c) => through.has(c.link.id)) } : undefined;
+            return (
+              <Branch key={channel.id} type={link.linkType} on={on(channel)} next={next}>
+                {button(channel, { height: MOBILE_NODE_H })}
+                {target && (
+                  <div className="ml-4">
+                    <Branch type={link.linkType} on={on(target)}>
+                      {button(target, { height: MOBILE_NODE_H })}
+                      <div className="ml-4">
+                        {ends.map((n, k) => (
+                          <Branch
+                            key={n.id}
+                            type={link.linkType}
+                            on={on(n)}
+                            next={k < ends.length - 1 ? { type: link.linkType, on: ends.slice(k + 1).some(on) } : undefined}
+                          >
+                            {button(n, { height: MOBILE_NODE_H })}
+                          </Branch>
+                        ))}
+                      </div>
+                    </Branch>
+                  </div>
+                )}
+              </Branch>
+            );
+          })}
+        </div>
       </div>
 
       {allRows.length > ROW_LIMIT && (
@@ -229,7 +289,9 @@ export function ImpactChain({ view, selectedId, onSelect }: ChainProps) {
         </button>
       )}
 
-      <ChainInspector view={view} node={nodeById.get(selectedId) ?? nodeById.get(EVENT_NODE)!} onSelect={onSelect} />
+      <div ref={inspectorRef} className="scroll-mt-20">
+        <ChainInspector view={view} node={nodeById.get(selectedId) ?? nodeById.get(EVENT_NODE)!} onSelect={onSelect} />
+      </div>
     </div>
   );
 }
